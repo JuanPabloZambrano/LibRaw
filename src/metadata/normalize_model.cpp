@@ -510,6 +510,7 @@ void LibRaw::GetNormalizedModel()
     "@E-M5 Mark II", "E-M5MarkII", "E-M5_M2",
     "@E-M5 Mark III", "E-M5MarkIII", "E-M5_M3",
     "@OM-1 Mark II", "OM-1MarkII", "OM-1_M2",
+    "@OM-5 Mark II", "OM-5MarkII", "OM-5_M2",
     "@SH-2", "SH-3",
     "@SP-310", "SP310",
     "@SP-320", "SP320",

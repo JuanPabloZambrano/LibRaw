@@ -172,6 +172,7 @@ it under the terms of the one of two licenses as you choose:
 #define OlyID_OM_1            OlyID_str2hex("S0095")
 #define OlyID_OM_5            OlyID_str2hex("S0101")
 #define OlyID_OM_1_Mark_II    OlyID_str2hex("S0121")
+#define OlyID_OM_5_Mark_II    OlyID_str2hex("S0130")
 #define OlyID_C_3030Z         OlyID_str2hex("SX351")
 #define OlyID_C_5050Z         OlyID_str2hex("SX558")
 #define OlyID_C_350Z          OlyID_str2hex("SX751")

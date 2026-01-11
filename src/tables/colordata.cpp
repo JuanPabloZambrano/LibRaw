@@ -1198,6 +1198,8 @@ int LibRaw::adobe_coeff(unsigned make_idx, const char *t_model,
 
 	  { LIBRAW_CAMERAMAKER_Olympus, "OM-1", 0, 0,
       { 9488, -3984, -714, -2887, 10945, 2229, -137, 960, 5786 } },
+    { LIBRAW_CAMERAMAKER_Olympus, "OM-5 Mark II", 0, 0,
+      { 12008, -5230, -1123, -2265, 10496, 2046, 69, 734, 4938 } },
     { LIBRAW_CAMERAMAKER_Olympus, "OM-5", 0, 0,
       { 11896, -5110, -1076, -3181, 11378,  2048,  -519,  1224,  5166 } },
 

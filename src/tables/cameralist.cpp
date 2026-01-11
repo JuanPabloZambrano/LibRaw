@@ -879,6 +879,7 @@ static const char *static_camera_list[] = {
 	"OM Digital Solutions OM-1",
 	"OM Digital Solutions OM-1 Mark II",
 	"OM Digital Solutions OM-5",
+	"OM Digital Solutions OM-5 Mark II",
 	"OmniVision 4688",
 	"OmniVision OV5647",
 	"OmniVision OV5648",
