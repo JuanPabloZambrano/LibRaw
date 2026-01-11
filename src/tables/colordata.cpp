@@ -415,6 +415,8 @@ int LibRaw::adobe_coeff(unsigned make_idx, const char *t_model,
 		{ 12806,-5779,-1110,-3546,11507,2318,-177,996,5715 } },
 	{ LIBRAW_CAMERAMAKER_Fujifilm, "GFX 100 II", 0, 0,
 	  { 12806,-5779,-1110,-3546,11507,2318,-177,996,5715 } },
+	{ LIBRAW_CAMERAMAKER_Fujifilm, "GFX 100RF", 0, 0,
+	  { 12806,-5779,-1110,-3546,11507,2318,-177,996,5715 } },
 	{ LIBRAW_CAMERAMAKER_Fujifilm, "GFX 100", 0, 0, // same CMs: "GFX 100", "GFX 100S"/"GFX100S", "GFX 100 IR"
 	  { 16212,-8423,-1583,-4336,12583,1937,-195,726,6199 } },
 	{ LIBRAW_CAMERAMAKER_Fujifilm, "GFX 50", 0, 0,  // same CMs: "GFX 50S", "GFX 50R", "GFX 50S II"

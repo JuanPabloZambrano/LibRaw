@@ -420,6 +420,7 @@ void LibRaw::GetNormalizedModel()
     "@GFX 100 II", "GFX100 II",
     "@GFX 100S II", "GFX100S II",
     "@GFX 100S", "GFX100S",
+    "@GFX 100RF", "GFX100RF",
     "@GFX 50S II", "GFX50S II"
   };
 
