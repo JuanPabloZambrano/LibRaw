@@ -3124,6 +3124,31 @@ void LibRaw::identify_finetune_dcr(char head[64], INT64 fsize, INT64 flen)
 
 		  /* need samples for lossy small/medium w/ APC crop*/
         }
+        else if(unique_id == SonyID_DSC_RX1RM3)
+        {
+          if (raw_width == 9600 && raw_height == 6376) // DSC-RX1RM3 14bit uncompressed/lossy (3:2)
+          {
+            width = 9570;
+            height = 6376;
+          }
+          else if (raw_width == 9728 && raw_height == 6656) // DSC-RX1RM3 14bit (4:3)
+          {
+            width = 9570;
+            height = 6376;
+          }
+          else if (raw_width == 7168 && raw_height == 4608) // DSC-RX1RM3 lossless (3:2) - APS-C
+          {
+            width = 6680;
+            height = 4456;
+          }
+          else if (raw_width == 5120 && raw_height == 3584) // DSC-RX1RM3 lossless (4:3) - 2x crop
+          {
+            width = 4782;
+            height = 3188;
+          }
+          else
+            imgdata.process_warnings |= LIBRAW_WARN_VENDOR_CROP_SUGGESTED;
+        }
         else if ((unique_id == SonyID_ILCE_7M4)|| (unique_id == SonyID_ILCE_7CM2) || (unique_id == SonyID_ILME_FX2))
         {
           if (raw_width == 7168 && raw_height == 5120) 

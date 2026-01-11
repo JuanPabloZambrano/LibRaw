@@ -272,6 +272,8 @@ void LibRaw::setSonyBodyFeatures(unsigned long long id) {
        LIBRAW_SONY_Tag2010h, 0x0346, 0xffff, 0x025c, 0x025d, 0x0210},
       {SonyID_DSC_RX1RM2, sbfDSC_FF,
        LIBRAW_SONY_Tag2010h, 0x0346, 0xffff, 0x025c, 0x025d, 0x0210},
+      {SonyID_DSC_RX1RM3, sbfDSC_FF,
+       LIBRAW_SONY_Tag2010None, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff},
       {SonyID_ILCE_QX1, sbfILCE_DX,
        LIBRAW_SONY_Tag2010g, 0x0344, 0x01a0, 0x025c, 0x025d, 0x0210},
       {SonyID_ILCE_7RM2, sbfILCE_FF,

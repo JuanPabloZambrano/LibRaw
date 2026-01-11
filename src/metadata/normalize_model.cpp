@@ -349,6 +349,7 @@ void LibRaw::GetNormalizedModel()
       { SonyID_DSC_RX100M4,    "DSC-RX100M4"},
       { SonyID_DSC_RX10M2,     "DSC-RX10M2"},
       { SonyID_DSC_RX1RM2,     "DSC-RX1RM2"},
+      { SonyID_DSC_RX1RM3,     "DSC-RX1RM3"},
       { SonyID_ILCE_QX1,       "ILCE-QX1"},     // Sony UMC-R10C
       { SonyID_ILCE_7RM2,      "ILCE-7RM2"},
       { SonyID_ILCE_7SM2,      "ILCE-7SM2"},
