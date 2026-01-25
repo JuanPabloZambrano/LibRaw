@@ -135,7 +135,7 @@ LR_INCLUDES=libraw/libraw.h libraw/libraw_alloc.h \
 
 library: lib/libraw.a lib/libraw_r.a
 
-all_samples: bin/raw-identify bin/simple_dcraw  bin/dcraw_emu \
+all_samples: bin/raw-identify bin/folder-identify bin/simple_dcraw  bin/dcraw_emu \
 	     bin/dcraw_half bin/half_mt bin/mem_image \
              bin/unprocessed_raw bin/4channels bin/multirender_test \
 	     bin/postprocessing_benchmark bin/rawtextdump
@@ -148,6 +148,9 @@ RawSpeed/rawspeed_xmldata.cpp: ${RAWSPEED_DATA}
 ## Samples ##
 bin/raw-identify: lib/libraw.a samples/raw-identify.cpp $(HEADERS)
 	$(CXX) ${CFLAGS} -o bin/raw-identify samples/raw-identify.cpp -L./lib -lraw  -lm  ${LDADD}
+
+bin/folder-identify: lib/libraw.a samples/folder-identify.cpp $(HEADERS)
+	$(CXX) ${CFLAGS} -o bin/folder-identify samples/folder-identify.cpp -L./lib -lraw  -lm  ${LDADD}
 
 bin/simple_dcraw: lib/libraw.a samples/simple_dcraw.cpp $(HEADERS)
 	$(CXX) -DLIBRAW_NOTHREADS ${CFLAGS} -o bin/simple_dcraw samples/simple_dcraw.cpp -L./lib -lraw  -lm  ${LDADD}

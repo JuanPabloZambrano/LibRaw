@@ -85,6 +85,7 @@ lib_libraw_r_la_LDFLAGS = -no-undefined -version-info $(LIBRAW_SHLIB_VER)
 # Sample binaries
 if EXAMPLES
 bin_PROGRAMS =	bin/raw-identify \
+		bin/folder-identify \
 		bin/unprocessed_raw \
 		bin/4channels \
 		bin/rawtextdump \
@@ -100,6 +101,10 @@ endif
 bin_raw_identify_SOURCES = samples/raw-identify.cpp
 bin_raw_identify_CPPFLAGS = $(lib_libraw_a_CPPFLAGS)
 bin_raw_identify_LDADD = lib/libraw.la
+
+bin_folder_identify_SOURCES = samples/folder-identify.cpp
+bin_folder_identify_CPPFLAGS = $(lib_libraw_a_CPPFLAGS)
+bin_folder_identify_LDADD = lib/libraw.la
 
 bin_unprocessed_raw_SOURCES = samples/unprocessed_raw.cpp
 bin_unprocessed_raw_CPPFLAGS = $(lib_libraw_a_CPPFLAGS)
