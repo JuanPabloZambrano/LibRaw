@@ -680,6 +680,35 @@ int LibRaw::open_datastream(LibRaw_abstract_datastream *stream)
 		  }
 		  else if (libraw_internal_data.unpacker_data.pana_encoding == 8)
 		  {
+			  // Special handling for DC-S1RM2: detect super-resolution mode with 8 stripes
+			  if (!strcasecmp(imgdata.idata.model, "DC-S1RM2"))
+			  {
+				  // Check if we have 8 stripes of data even though stripe_count says 4
+				  // This happens in super-resolution mode where stripes are arranged in two rows
+				  if (libraw_internal_data.unpacker_data.pana8.stripe_count == 4 &&
+					  libraw_internal_data.unpacker_data.pana8.stripe_offsets[4] != 0)
+				  {
+					  libraw_internal_data.unpacker_data.pana8.stripe_count = 8;
+				  }
+			  }
+
+			  if (!strcasecmp(imgdata.idata.model, "DC-S1RM2") &&
+				  libraw_internal_data.unpacker_data.pana8.stripe_count > 0 &&
+				  libraw_internal_data.unpacker_data.pana8.stripe_width[0] == 0)
+			  {
+				  // S1RM2 has stripe_count but no proper stripe metadata
+				  // Reconstruct as single stripe with full image dimensions and entire data block
+				  INT64 ds = INT64(libraw_internal_data.unpacker_data.data_size);
+				  if (!ds)
+					  ds = libraw_internal_data.internal_data.input->size() - libraw_internal_data.unpacker_data.data_offset;
+
+				  libraw_internal_data.unpacker_data.pana8.stripe_width[0] = imgdata.sizes.raw_width;
+				  libraw_internal_data.unpacker_data.pana8.stripe_height[0] = imgdata.sizes.raw_height;
+				  libraw_internal_data.unpacker_data.pana8.stripe_offsets[0] = libraw_internal_data.unpacker_data.data_offset;
+				  libraw_internal_data.unpacker_data.pana8.stripe_compressed_size[0] = ds * 8; // Convert bytes to bits for consistency
+				  libraw_internal_data.unpacker_data.pana8.stripe_count = 1;
+			  }
+
 			  if (libraw_internal_data.unpacker_data.pana8.stripe_count > 0)
 				  load_raw = &LibRaw::panasonicC8_load_raw;
 			  else

@@ -105,31 +105,82 @@ void pana8_bufio_t::refill(uint32_t newoffset)
 void LibRaw::panasonicC8_load_raw()
 {
 	int errs = 0;
-	unsigned totalw = 0;
 	INT64 fsz = libraw_internal_data.internal_data.input->size();
-	if (libraw_internal_data.unpacker_data.pana8.stripe_count > 5) errs++;
-	for (int i = 0; i < libraw_internal_data.unpacker_data.pana8.stripe_count && i < 5; i++)
+
+	// Special handling for DC-S1RM2: allow more than 5 stripes for super-resolution
+	bool is_s1rm2 = !strcasecmp(imgdata.idata.model, "DC-S1RM2");
+	bool is_superres = is_s1rm2 && libraw_internal_data.unpacker_data.pana8.stripe_count == 8;
+
+	// Allow up to 10 stripes for S1RM2 super-resolution mode
+	if (libraw_internal_data.unpacker_data.pana8.stripe_count > 10 ||
+		(libraw_internal_data.unpacker_data.pana8.stripe_count > 5 && !is_s1rm2))
+		errs++;
+
+	// Validate all stripes
+	for (int i = 0; i < libraw_internal_data.unpacker_data.pana8.stripe_count && i < 10; i++)
 	{
-		if (libraw_internal_data.unpacker_data.pana8.stripe_height[i] != imgdata.sizes.raw_height)
-			errs++;
 		if (libraw_internal_data.unpacker_data.pana8.stripe_offsets[i] < 0
 			|| (libraw_internal_data.unpacker_data.pana8.stripe_offsets[i] + INT64((libraw_internal_data.unpacker_data.pana8.stripe_compressed_size[i] + 7u) / 8u)) > fsz)
 			errs++;
-		totalw += libraw_internal_data.unpacker_data.pana8.stripe_width[i];
 	}
-	if (totalw != imgdata.sizes.raw_width) errs++;
+
 	if (errs)
 		throw LIBRAW_EXCEPTION_IO_CORRUPT;
 
-	pana8_param_t pana8_param(libraw_internal_data.unpacker_data.pana8);
-	pana8_decode_loop(&pana8_param);
+	if (is_superres)
+	{
+		// Super-resolution: decode top 4 stripes, then bottom 4 stripes with vertical offset
+		// Save full metadata
+		pana8_tags_t all_stripes = libraw_internal_data.unpacker_data.pana8;
+		pana8_tags_t top_stripes = all_stripes;
+		pana8_tags_t bottom_stripes = all_stripes;
+
+		// Top half: stripes 0-3
+		top_stripes.stripe_count = 4;
+
+		// Bottom half: stripes 4-7, copy to indices 0-3 for decoding
+		bottom_stripes.stripe_count = 4;
+		for (int i = 0; i < 4; i++)
+		{
+			bottom_stripes.stripe_offsets[i] = all_stripes.stripe_offsets[i + 4];
+			bottom_stripes.stripe_compressed_size[i] = all_stripes.stripe_compressed_size[i + 4];
+			bottom_stripes.stripe_width[i] = all_stripes.stripe_width[i + 4];
+			bottom_stripes.stripe_height[i] = all_stripes.stripe_height[i + 4];
+			bottom_stripes.stripe_left[i] = all_stripes.stripe_left[i + 4];
+		}
+
+		// Decode top half
+		libraw_internal_data.unpacker_data.pana8 = top_stripes;
+		pana8_param_t top_param(top_stripes);
+		pana8_decode_loop(&top_param);
+
+		// Decode bottom half with vertical offset
+		uint16_t top_height = top_stripes.stripe_height[0];
+		uint16_t *saved_raw_image = imgdata.rawdata.raw_image;
+		size_t offset_pixels = (size_t)top_height * (size_t)imgdata.sizes.raw_width;
+		imgdata.rawdata.raw_image += offset_pixels;
+
+		libraw_internal_data.unpacker_data.pana8 = bottom_stripes;
+		pana8_param_t bottom_param(bottom_stripes);
+		pana8_decode_loop(&bottom_param);
+
+		// Restore pointers and metadata
+		imgdata.rawdata.raw_image = saved_raw_image;
+		libraw_internal_data.unpacker_data.pana8 = all_stripes;
+	}
+	else
+	{
+		// Normal decode for non-super-resolution
+		pana8_param_t pana8_param(libraw_internal_data.unpacker_data.pana8);
+		pana8_decode_loop(&pana8_param);
+	}
 }
 
 void LibRaw::pana8_decode_loop(void *data)
 {
 #ifdef LIBRAW_USE_OPENMP
-	int errs = 0, scount = MIN(5,libraw_internal_data.unpacker_data.pana8.stripe_count);
-#pragma omp parallel for 
+	int errs = 0, scount = MIN(10,libraw_internal_data.unpacker_data.pana8.stripe_count);
+#pragma omp parallel for
   for (int stream = 0; stream < scount; stream++)
   {
 		if (pana8_decode_strip(data, stream))
@@ -138,7 +189,7 @@ void LibRaw::pana8_decode_loop(void *data)
 	if(errs)
       throw LIBRAW_EXCEPTION_IO_CORRUPT;
 #else
-  for (int stream = 0; stream < libraw_internal_data.unpacker_data.pana8.stripe_count && stream < 5; stream++)
+  for (int stream = 0; stream < libraw_internal_data.unpacker_data.pana8.stripe_count && stream < 10; stream++)
     if (pana8_decode_strip(data, stream))
       throw LIBRAW_EXCEPTION_IO_CORRUPT;
 #endif
@@ -147,14 +198,16 @@ void LibRaw::pana8_decode_loop(void *data)
 int LibRaw::pana8_decode_strip(void* data, int stream)
 {
 	pana8_param_t *pana8_param = (pana8_param_t*)data;
-	if (!data || stream < 0 || stream > 4 || stream > libraw_internal_data.unpacker_data.pana8.stripe_count) return 1; // error
+	if (!data || stream < 0 || stream > 9 || stream > libraw_internal_data.unpacker_data.pana8.stripe_count) return 1; // error
 
 	unsigned exactbytes = (libraw_internal_data.unpacker_data.pana8.stripe_compressed_size[stream] + 7u) / 8u;
+
     pana8_bufio_t bufio(libraw_internal_data.internal_data.input,
                         libraw_internal_data.unpacker_data.pana8.stripe_offsets[stream], exactbytes);
-    return !pana8_param->DecodeC8(bufio, libraw_internal_data.unpacker_data.pana8.stripe_width[stream],
+    int result = !pana8_param->DecodeC8(bufio, libraw_internal_data.unpacker_data.pana8.stripe_width[stream],
                                   libraw_internal_data.unpacker_data.pana8.stripe_height[stream], this,
                                   libraw_internal_data.unpacker_data.pana8.stripe_left[stream]);
+	return result;
 }
 
 struct pana8_base_t

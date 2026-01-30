@@ -315,8 +315,8 @@ int LibRaw::parse_tiff_ifd(INT64 base)
         if (type == LIBRAW_EXIFTAG_TYPE_UNDEFINED && len == 50)
         {
           ushort count = get2();
-          if (count > 5)
-            count = 5;
+          if (count > 10)
+            count = 10;
           for (i = 0; i < count; i++)
             pana8.stripe_offsets[i] = get4();
         }
@@ -325,8 +325,8 @@ int LibRaw::parse_tiff_ifd(INT64 base)
         if (type == LIBRAW_EXIFTAG_TYPE_UNDEFINED && len == 50)
         {
           ushort count = get2();
-          if (count > 5)
-            count = 5;
+          if (count > 10)
+            count = 10;
           for (i = 0; i < count; i++)
             pana8.stripe_left[i] = get4();
         }
@@ -335,8 +335,8 @@ int LibRaw::parse_tiff_ifd(INT64 base)
         if (type == LIBRAW_EXIFTAG_TYPE_UNDEFINED && len == 50)
         {
           ushort count = get2();
-          if (count > 5)
-            count = 5;
+          if (count > 10)
+            count = 10;
           for (i = 0; i < count; i++)
             pana8.stripe_compressed_size[i] = get4();
         }
@@ -345,8 +345,8 @@ int LibRaw::parse_tiff_ifd(INT64 base)
         if (type == LIBRAW_EXIFTAG_TYPE_UNDEFINED && len == 26)
         {
           ushort count = get2();
-          if (count > 5)
-            count = 5;
+          if (count > 10)
+            count = 10;
           for (i = 0; i < count; i++)
             pana8.stripe_width[i] = get2();
         }
@@ -355,8 +355,8 @@ int LibRaw::parse_tiff_ifd(INT64 base)
         if (type == LIBRAW_EXIFTAG_TYPE_UNDEFINED && len == 26)
         {
           ushort count = get2();
-          if (count > 5)
-            count = 5;
+          if (count > 10)
+            count = 10;
           for (i = 0; i < count; i++)
             pana8.stripe_height[i] = get2();
         }

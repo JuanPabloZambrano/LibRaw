@@ -150,7 +150,7 @@ typedef struct
   INT64  *chunk_offsets;
 } crx_data_header_t;
 
-typedef struct 
+typedef struct
 {
 	uint32_t tag39[6];
 	uint16_t tag3A[6];
@@ -159,11 +159,11 @@ typedef struct
 	uint16_t tag40a[17], tag40b[17], tag41[17];
 	uint16_t stripe_count; // 0x42
 	uint16_t tag43;
-	INT64	 stripe_offsets[5]; //0x44
-	uint16_t stripe_left[5]; // 0x45
-	uint32_t stripe_compressed_size[5]; //0x46
-	uint16_t stripe_width[5]; //0x47
-	uint16_t stripe_height[5];
+	INT64	 stripe_offsets[10]; //0x44 - increased for S1RM2 super-resolution
+	uint16_t stripe_left[10]; // 0x45
+	uint32_t stripe_compressed_size[10]; //0x46
+	uint16_t stripe_width[10]; //0x47
+	uint16_t stripe_height[10]; //0x48
 } pana8_tags_t;
 
 typedef struct
